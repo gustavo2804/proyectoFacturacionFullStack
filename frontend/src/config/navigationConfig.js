@@ -13,8 +13,7 @@ export const navigationConfig = {
       actions: [
         { name: "Ver Facturas", href: '/facturas', icon: 'list' },
         { name: "Nueva Factura", href: '/facturas/nueva', icon: 'plus' },
-        { name: "Nueva Cotización", href: '/facturas/cotizacion', icon: 'document' },
-        { name: "Reportes", href: '/facturas/reportes', icon: 'chart' }
+
       ]
     },
     { 
@@ -24,8 +23,6 @@ export const navigationConfig = {
       actions: [
         { name: "Ver Productos", href: '/productos', icon: 'list' },
         { name: "Nuevo Producto", href: '/productos/nuevo', icon: 'plus' },
-        { name: "Categorías", href: '/productos/categorias', icon: 'tag' },
-        { name: "Inventario", href: '/productos/inventario', icon: 'archive' }
       ]
     },
     { 
@@ -54,7 +51,6 @@ export const navigationConfig = {
       actions: [
         { name: "Ver Cotizaciones", href: '/cotizaciones', icon: 'list' },
         { name: "Nueva Cotización", href: '/cotizaciones/nueva', icon: 'plus' },
-        { name: "Reportes", href: '/cotizaciones/reportes', icon: 'chart' }
       ]
     }
   ]
