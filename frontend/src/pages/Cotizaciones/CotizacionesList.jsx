@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CotizacionesApi from '../../services/cotizaciones.api'
+import ClientesApi from '../../services/clientes.api'
 import AdvancedTable from '../../components/AdvancedTable'
 import Toast from '../../components/ui/toast'
 
 const CotizacionesList = () => {
   const navigate = useNavigate()
   const [cotizaciones, setCotizaciones] = useState([])
+  const [clientes, setClientes] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [toast, setToast] = useState({ isVisible: false, type: 'success', message: '' })
@@ -20,32 +22,44 @@ const CotizacionesList = () => {
   }
 
   useEffect(() => {
-    const fetchCotizaciones = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true)
         setError(null)
-        const data = await CotizacionesApi.getAll()
-        setCotizaciones(data)
+        
+        // Cargar cotizaciones y clientes en paralelo
+        const [cotizacionesData, clientesData] = await Promise.all([
+          CotizacionesApi.getAll(),
+          ClientesApi.getAll()
+        ])
+        
+        setCotizaciones(cotizacionesData)
+        setClientes(clientesData)
       } catch (error) {
-        console.error('Error al cargar cotizaciones:', error)
+        console.error('Error al cargar datos:', error)
         setError('Error al cargar las cotizaciones')
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchCotizaciones()
+    fetchData()
   }, [])
 
-  const dataFiltrada = cotizaciones.map(cotizacion => ({
-    id: cotizacion.id,
-    numero_cotizacion: cotizacion.numero_cotizacion,
-    cliente: cotizacion.cliente?.nombre || 'Sin cliente',
-    fecha_emision: new Date(cotizacion.fecha_emision).toLocaleDateString('es-DO'),
-    fecha_vencimiento: new Date(cotizacion.fecha_vencimiento).toLocaleDateString('es-DO'),
-    estado: cotizacion.anulado ? 'Anulada' : 'Activa',
-    total: `$${parseFloat(cotizacion.total).toLocaleString('es-DO', { minimumFractionDigits: 2 })}`,
-  }))
+  const dataFiltrada = cotizaciones.map(cotizacion => {
+    // Buscar el cliente por ID
+    const cliente = clientes.find(c => c.id === cotizacion.cliente)
+    
+    return {
+      id: cotizacion.id,
+      numero_cotizacion: cotizacion.numero_cotizacion,
+      cliente: cliente ? cliente.nombre : 'Cliente no encontrado',
+      fecha_emision: new Date(cotizacion.fecha_emision).toLocaleDateString('es-DO'),
+      fecha_vencimiento: new Date(cotizacion.fecha_vencimiento).toLocaleDateString('es-DO'),
+      estado: cotizacion.anulado ? 'Anulada' : 'Activa',
+      total: `$${parseFloat(cotizacion.total).toLocaleString('es-DO', { minimumFractionDigits: 2 })}`,
+    }
+  })
 
   const columns = [
     { key: 'numero_cotizacion', label: 'No. Cotización', width: '15%', maxWidth: '120px' },

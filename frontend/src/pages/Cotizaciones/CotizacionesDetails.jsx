@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import CotizacionesApi, { DetalleCotizacionApi } from "../../services/cotizaciones.api";
 import ClientesApi from "../../services/clientes.api";
 import { ProductosApi } from "../../services/facturas.api";
+import { generateCotizacionPDF } from "../../utils/pdfGenerator";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
@@ -96,7 +97,14 @@ const CotizacionesDetails = () => {
             fecha_emision: cotizacionData.fecha_emision,
             fecha_vencimiento: cotizacionData.fecha_vencimiento || ''
           });
-          setDetalles(detallesData);
+          // Asegurar que los subtotales sean números válidos
+          const detallesConSubtotalValido = detallesData.map(detalle => ({
+            ...detalle,
+            cantidad: parseFloat(detalle.cantidad) || 0,
+            precio_unitario: parseFloat(detalle.precio_unitario) || 0,
+            subtotal: parseFloat(detalle.subtotal) || 0
+          }));
+          setDetalles(detallesConSubtotalValido);
         } else {
           // Para nuevas cotizaciones, el número se generará automáticamente en el backend
           setCotizacion(prev => ({
@@ -146,8 +154,8 @@ const CotizacionesDetails = () => {
 
       // Calcular subtotal cuando cambia cantidad o precio
       if (field === 'cantidad' || field === 'precio_unitario') {
-        const cantidad = field === 'cantidad' ? parseFloat(value) || '' : nuevosDetalles[index].cantidad;
-        const precio = field === 'precio_unitario' ? parseFloat(value) || '' : nuevosDetalles[index].precio_unitario;
+        const cantidad = field === 'cantidad' ? parseFloat(value) || 0 : parseFloat(nuevosDetalles[index].cantidad) || 0;
+        const precio = field === 'precio_unitario' ? parseFloat(value) || 0 : parseFloat(nuevosDetalles[index].precio_unitario) || 0;
         nuevosDetalles[index].subtotal = cantidad * precio;
       }
 
@@ -169,7 +177,7 @@ const CotizacionesDetails = () => {
     }
   };
 
-  // Función para generar PDF (simplificada para cotizaciones)
+  // Función para generar PDF de cotización
   const handleGeneratePDF = async () => {
     try {
       setIsGeneratingPDF(true);
@@ -188,9 +196,11 @@ const CotizacionesDetails = () => {
         return;
       }
 
-      // Aquí se implementaría la generación del PDF para cotizaciones
-      console.log('Generando PDF de cotización:', cotizacion, clienteSeleccionado, detalles);
-      showToast('success', 'PDF de cotización generado exitosamente');
+      // Generar el PDF
+      const fileName = generateCotizacionPDF(cotizacion, clienteSeleccionado, detalles, productos);
+      
+      // Mostrar mensaje de éxito
+      showToast('success', `PDF generado exitosamente: ${fileName}`);
       
     } catch (error) {
       console.error('Error al generar PDF:', error);
@@ -203,15 +213,18 @@ const CotizacionesDetails = () => {
 
   // Calcular totales
   const calcularTotales = () => {
-    const subtotal = detalles.reduce((sum, detalle) => sum + (detalle.subtotal || 0), 0);
-    const itbis = subtotal * itbisRate;
+    const subtotal = detalles.reduce((sum, detalle) => {
+      const detalleSubtotal = parseFloat(detalle.subtotal) || 0;
+      return sum + detalleSubtotal;
+    }, 0);
+    const itbis = subtotal * (parseFloat(itbisRate) || 0);
     const total = subtotal + itbis;
 
     return {
       subtotal: subtotal.toFixed(2),
       itbis: itbis.toFixed(2),
       total: total.toFixed(2),
-      itbisPercentage: (itbisRate * 100).toFixed(0)
+      itbisPercentage: ((parseFloat(itbisRate) || 0) * 100).toFixed(0)
     };
   };
 
@@ -264,7 +277,14 @@ const CotizacionesDetails = () => {
           fecha_emision: cotizacionData.fecha_emision,
           fecha_vencimiento: cotizacionData.fecha_vencimiento || ''
         });
-        setDetalles(detallesData);
+        // Asegurar que los subtotales sean números válidos
+        const detallesConSubtotalValido = detallesData.map(detalle => ({
+          ...detalle,
+          cantidad: parseFloat(detalle.cantidad) || 0,
+          precio_unitario: parseFloat(detalle.precio_unitario) || 0,
+          subtotal: parseFloat(detalle.subtotal) || 0
+        }));
+        setDetalles(detallesConSubtotalValido);
       }
     } catch (error) {
       console.error('Error al guardar cotización:', error);
@@ -508,7 +528,7 @@ const CotizacionesDetails = () => {
                       />
                     </TableCell>
                     <TableCell className="font-medium">
-                      ${detalle.subtotal?.toFixed(2) || '0.00'}
+                      ${(parseFloat(detalle.subtotal) || 0).toFixed(2)}
                     </TableCell>
                     <TableCell>
                       <Button

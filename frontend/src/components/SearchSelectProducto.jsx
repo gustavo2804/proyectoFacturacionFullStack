@@ -128,7 +128,7 @@ const SearchSelectProducto = ({
             value={searchTerm}
             onChange={handleSearchChange}
             onFocus={handleFocus}
-            className="pl-10 pr-10 border divider-border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+            className="pl-10 pr-10 border divider-border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white hover:bg-gray-50"
             disabled={isDisabled}
           />
           {searchTerm && (
@@ -180,7 +180,7 @@ const SearchSelectProducto = ({
                   <div
                     key={producto.id}
                     onClick={() => handleSelectChange(producto.id.toString())}
-                    className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 [[memory:7140669]] cursor-pointer border-b border-gray-100 last:border-b-0"
+                    className="flex items-center gap-3 px-3 py-2 hover:bg-emerald-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                   >
                     <Package className="h-4 w-4 text-emerald-500 flex-shrink-0" />
                     <div className="flex flex-col flex-1 min-w-0">

@@ -61,7 +61,7 @@ export function NavUser({
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg bg-white border divider-border shadow-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -80,22 +80,22 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-emerald-50 focus:bg-emerald-50 hover:text-emerald-700 focus:text-emerald-700">
                 <Sparkles />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-emerald-50 focus:bg-emerald-50 hover:text-emerald-700 focus:text-emerald-700">
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-emerald-50 focus:bg-emerald-50 hover:text-emerald-700 focus:text-emerald-700">
                 <CreditCard />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-emerald-50 focus:bg-emerald-50 hover:text-emerald-700 focus:text-emerald-700">
                 <Bell />
                 Notifications
               </DropdownMenuItem>

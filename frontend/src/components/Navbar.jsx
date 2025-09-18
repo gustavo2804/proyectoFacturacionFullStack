@@ -5,11 +5,13 @@ import { navigationConfig } from "../config/navigationConfig";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
 import { Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function Navbar({sidebarTrigger}) {
   const [activeItem, setActiveItem] = useState('Home');
   const [searchValue, setSearchValue] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
 
   const { menuItems } = navigationConfig;
   
@@ -46,6 +48,10 @@ export function Navbar({sidebarTrigger}) {
     e.preventDefault();
     console.log('Búsqueda:', searchValue);
     // Aquí puedes agregar la lógica de búsqueda
+  };
+
+  const handleSettingsClick = () => {
+    navigate('/configuracion');
   };
 
   return (
@@ -116,6 +122,7 @@ export function Navbar({sidebarTrigger}) {
           <Button 
             variant="ghost" 
             size="sm"
+            onClick={handleSettingsClick}
             className="h-8 w-8 p-0 text-slate-700 hover:bg-emerald-500 hover:text-white transition-colors"
           >
             <Settings className="h-4 w-4" />

@@ -5,6 +5,7 @@ import FacturasRoutes from './facturaRoutes/FacturasRoutes'
 import ProductosRoutes from './productosRoutes/ProductosRoutes'
 import ComprobantesRoutes from './comprobantesRoutes/ComprobantesRoutes'
 import CotizacionesRoutes from './cotizacionesRoutes/CotizacionesRoutes'
+import ConfigurationPage from '../pages/Configuracion/ConfigurationPage'
 
 const AppRouter = () => {
   return (
@@ -16,6 +17,7 @@ const AppRouter = () => {
         <Route path='/facturas/*' element={<FacturasRoutes />} />
         <Route path='/clientes/*' element={<ClientesRoutes />} />
         <Route path='/cotizaciones/*' element={<CotizacionesRoutes />} />
+        <Route path='/configuracion' element={<ConfigurationPage />} />
     </Routes>
   )
 }
