@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { SerieComprobantesApi } from '../../services/comprobantes.api'
 import AdvancedTable from '../../components/AdvancedTable'
 
 const ComprobantesList = () => {
-
+  const navigate = useNavigate()
   const [seriesComprobante, setSeriesComprobante] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -78,12 +79,29 @@ const ComprobantesList = () => {
     )
   }
 
+  const handleAdd = () => {
+    navigate('/comprobantes/nuevo')
+  }
+
+  const handleEdit = (id) => {
+    navigate(`/comprobantes/${id}`)
+  }
+
+  const handleView = (id) => {
+    navigate(`/comprobantes/${id}`)
+  }
+
   return (
     <div className='w-full px-8'>
         <AdvancedTable 
           data={dataFiltrada} 
-          columns={columns} 
+          columns={columns}
+          enableAdd={true}
+          addButtonText="Nuevo Comprobante"
           title="Series de Comprobante"
+          onAdd={handleAdd}
+          onEdit={handleEdit}
+          onView={handleView}
         />
     </div>
   )

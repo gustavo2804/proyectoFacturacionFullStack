@@ -10,6 +10,7 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  LogOut,
 } from "lucide-react"
 
 import { NavCustom } from "@/components/nav-custom"
@@ -21,6 +22,9 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
 // This is sample data.
@@ -154,16 +158,31 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const handleLogout = () => {
+    // Add logout logic here
+    console.log('Logout clicked');
+  };
+
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" {...props} className="border-r border-gray-200 mt-14">
       <SidebarHeader>
-      <NavUser user={data.user} />
+        {/* Logo area - will be handled by navbar */}
       </SidebarHeader>
       <SidebarContent>
         <NavCustom items={navigationConfig.menuItems} />
       </SidebarContent>
       <SidebarFooter>
-        
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton 
+              onClick={handleLogout}
+              className="w-full justify-start text-red-600 hover:bg-red-50 hover:text-red-700"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Log out</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

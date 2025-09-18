@@ -11,8 +11,6 @@ export const navigationConfig = {
       href: '/facturas',
       icon: 'receipt',
       actions: [
-        { name: "Ver Facturas", href: '/facturas', icon: 'list' },
-        { name: "Nueva Factura", href: '/facturas/nueva', icon: 'plus' },
 
       ]
     },
@@ -21,8 +19,7 @@ export const navigationConfig = {
       href: '/productos',
       icon: 'package',
       actions: [
-        { name: "Ver Productos", href: '/productos', icon: 'list' },
-        { name: "Nuevo Producto", href: '/productos/nuevo', icon: 'plus' },
+       
       ]
     },
     { 
@@ -30,9 +27,6 @@ export const navigationConfig = {
       href: '/clientes',
       icon: 'users',
       actions: [
-        { name: "Ver Clientes", href: '/clientes/', icon: 'list' },
-        { name: "Nuevo Cliente", href: '/clientes/nuevo', icon: 'plus' },
-        { name: "Importar", href: '/clientes/importar', icon: 'upload' }
       ]
     },
     {
@@ -40,8 +34,6 @@ export const navigationConfig = {
       href: '/comprobantes',
       icon: 'document',
       actions: [
-        { name: "Ver Series", href: '/comprobantes', icon: 'list' },
-        { name: "Nueva Serie", href: '/comprobantes/nuevo', icon: 'plus' },
       ]
     },
     {
@@ -49,8 +41,7 @@ export const navigationConfig = {
       href: '/cotizaciones',
       icon: 'file-text',
       actions: [
-        { name: "Ver Cotizaciones", href: '/cotizaciones', icon: 'list' },
-        { name: "Nueva Cotización", href: '/cotizaciones/nueva', icon: 'plus' },
+    
       ]
     }
   ]

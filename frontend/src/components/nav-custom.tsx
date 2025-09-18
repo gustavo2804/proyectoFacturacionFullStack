@@ -3,6 +3,7 @@
 import { ChevronRight, Home, Receipt, Package, Users, Plus, List, FileText, Tag, Archive, Upload, BarChart3 } from "lucide-react"
 import { useSidebarNavigation } from "@/contexts/SidebarContext"
 import { useNavigate } from "react-router-dom"
+import { useSidebar } from "@/components/ui/sidebar"
 
 import {
   Collapsible,
@@ -51,11 +52,21 @@ export function NavCustom({
 }) {
   const { activeSection, openSections, toggleSection, setActiveSection } = useSidebarNavigation();
   const navigate = useNavigate();
+  const { state } = useSidebar();
 
   const handleSectionToggle = (item: any) => {
     // Actualizar la sección activa
     setActiveSection(item.name);
-    // Manejar la apertura/cierre de las secciones
+    
+    // Para Home, siempre navegar directamente sin manejar colapso
+    if (item.name === 'Home') {
+      if (item.href) {
+        navigate(item.href);
+      }
+      return;
+    }
+    
+    // Manejar la apertura/cierre de las secciones para otros elementos
     toggleSection(item.name);
     // Solo navegar si no tiene sub-acciones (es un elemento simple)
     if (!item.actions || item.actions.length === 0) {
@@ -74,6 +85,23 @@ export function NavCustom({
           const isOpen = openSections.has(item.name);
           const isActive = activeSection === item.name;
           
+          // Handle Home item differently - no collapsible behavior
+          if (item.name === 'Home') {
+            return (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton 
+                  tooltip={item.name}
+                  isActive={isActive}
+                  onClick={() => handleSectionToggle(item)}
+                >
+                  <IconComponent />
+                  <span>{item.name}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          }
+          
+          // Handle other items with collapsible behavior
           return (
             <Collapsible
               key={item.name}

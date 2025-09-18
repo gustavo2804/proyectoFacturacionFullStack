@@ -147,4 +147,24 @@
   .divider-border {
     border-color: var(--divider-lines);
   }
+
+  /* Override sidebar transitions to only use horizontal movement */
+  [data-slot="sidebar-container"] {
+    transition: width 200ms ease-linear !important;
+  }
+  
+  [data-slot="sidebar-gap"] {
+    transition: width 200ms ease-linear !important;
+  }
+
+  /* Ensure full width layout */
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100vh;
+  }
 }

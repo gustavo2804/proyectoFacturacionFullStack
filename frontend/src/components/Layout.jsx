@@ -21,20 +21,24 @@ export default function Layout({children}) {
   return (
     <SidebarNavigationProvider>
       <SidebarProvider>
-        <AppSidebar variant="inset" />
-        <SidebarInset className="flex flex-col transition-all duration-200 ease-in-out sidebar-inset-bg-custom">
-          <header className="sticky top-0 z-10 bg-background shrink-0 w-full transition-all duration-200 ease-in-out">
-            <div className="w-full flex flex-col items-center pb-4">
-                <Navbar className="mt-4 p-4"/>
-                <Slider/>
-            </div>
+        <div className="flex flex-col h-screen w-full">
+          {/* Navbar extending over entire width */}
+          <header className="sticky top-0 z-20 bg-background shrink-0 w-full transition-all duration-200 ease-in-out">
+            <Navbar />
           </header>
-          <main className="flex-1 overflow-auto">
-            <div className="flex flex-col items-top justify-center w-full p-4 pt-6">
-              {children}
-            </div>
-          </main>
-        </SidebarInset>
+          
+          {/* Main content area with sidebar */}
+          <div className="flex flex-1 overflow-hidden w-full">
+            <AppSidebar />
+            <SidebarInset className="flex flex-col transition-all duration-200 ease-in-out sidebar-inset-bg-custom flex-1 min-w-0">
+              <main className="flex-1 overflow-auto w-full">
+                <div className="flex flex-col items-top justify-center w-full p-4 pt-6">
+                  {children}
+                </div>
+              </main>
+            </SidebarInset>
+          </div>
+        </div>
         <ComprobantesAlert />
       </SidebarProvider>
     </SidebarNavigationProvider>

@@ -143,10 +143,10 @@ export default function AdvancedTable({
     <div className="w-full max-w-6xl mx-auto">
       <Card className="bg-white border rounded-xl divider-border shadow-md">
         <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
             
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
               {/* Botón de agregar */}
               {enableAdd && (
                 <Button
@@ -158,12 +158,12 @@ export default function AdvancedTable({
               )}
 
               {/* Input de búsqueda */}
-              <div className="relative [&>input:focus]:ring-2 [&>input:focus]:ring-emerald-500">
+              <div className="relative [&>input:focus]:ring-2 [&>input:focus]:ring-emerald-500 w-full sm:w-80">
                 <Input
                   placeholder={searchPlaceholder}
                   value={filterText}
                   onChange={(e) => setFilterText(e.target.value)}
-                  className="w-80 h-8 sm:h-9 pl-3 pr-4 text-xs sm:text-sm border divider-border rounded-md focus:outline-none focus:!ring-emerald-500 focus:border-transparent bg-white text-slate-700 placeholder:text-slate-500 hover:bg-slate-50 transition-colors"
+                  className="w-full h-8 sm:h-9 pl-3 pr-4 text-xs sm:text-sm border divider-border rounded-md focus:outline-none focus:!ring-emerald-500 focus:border-transparent bg-white text-slate-700 placeholder:text-slate-500 hover:bg-slate-50 transition-colors"
                 />
               </div>
 
@@ -198,8 +198,8 @@ export default function AdvancedTable({
         </CardHeader>
 
         <CardContent className="p-6 pt-0">
-          <div className="bg-white overflow-x-auto">
-            <Table className="min-w-full table-fixed">
+          <div className="bg-white overflow-x-auto overflow-y-visible">
+            <Table className="min-w-full table-fixed" style={{ minWidth: '800px' }}>
               <TableHeader>
                 <TableRow className="bg-gray-50 hover:bg-gray-50 border-b-2 divider-border">
                   <TableHead className="w-12 px-6">
@@ -307,12 +307,12 @@ export default function AdvancedTable({
           </div>
 
           {/* Footer con paginación */}
-          <div className="flex items-center justify-between mt-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4 gap-4">
             <div className="text-sm text-muted-foreground text-left">
               {selectedRows.size} of {filteredData.length} row(s) selected.
             </div>
             
-            <div className="flex items-center space-x-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-6 w-full sm:w-auto">
               <div className="flex items-center space-x-2">
                 <p className="text-sm font-medium">Rows per page</p>
                 <Select
@@ -337,7 +337,7 @@ export default function AdvancedTable({
               <div className="flex w-[100px] items-center justify-center text-sm font-medium">
                 Page {currentPage} of {totalPages}
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 flex-wrap">
                 <Button
                   variant="outline"
                   className="hidden h-8 w-8 p-0 lg:flex"
