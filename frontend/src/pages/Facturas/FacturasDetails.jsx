@@ -247,7 +247,7 @@ const FacturasDetails = () => {
       }
 
       // Generar el PDF
-      const fileName = generateFacturaPDF(factura, clienteSeleccionado, detalles, productos);
+      const fileName = generateFacturaPDF(factura, clienteSeleccionado, detalles, productos, itbisRate);
       
       // Mostrar mensaje de éxito (opcional)
       console.log(`PDF generado: ${fileName}`);

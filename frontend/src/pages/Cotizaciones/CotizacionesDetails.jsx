@@ -197,7 +197,7 @@ const CotizacionesDetails = () => {
       }
 
       // Generar el PDF
-      const fileName = generateCotizacionPDF(cotizacion, clienteSeleccionado, detalles, productos);
+      const fileName = generateCotizacionPDF(cotizacion, clienteSeleccionado, detalles, productos, itbisRate);
       
       // Mostrar mensaje de éxito
       showToast('success', `PDF generado exitosamente: ${fileName}`);

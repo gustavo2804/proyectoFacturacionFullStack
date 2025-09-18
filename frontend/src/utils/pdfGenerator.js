@@ -1,6 +1,20 @@
 import jsPDF from 'jspdf';
 import { empresaConfig } from '../config/empresaConfig';
 
+// Función para obtener el logo de la empresa desde localStorage
+const getCompanyLogo = () => {
+  try {
+    const savedLogo = localStorage.getItem('empresaLogo');
+    if (savedLogo) {
+      const logoData = JSON.parse(savedLogo);
+      return logoData.data; // Base64 data
+    }
+  } catch (error) {
+    console.error('Error loading company logo:', error);
+  }
+  return null;
+};
+
 // Configuración de fuentes y estilos - Usando colores emerald de la aplicación
 const COLORS = {
   primary: '#059669', // emerald-600 (verde principal de la app)
@@ -19,7 +33,7 @@ const FONTS = {
   bold: 'Helvetica-Bold'
 };
 
-export const generateFacturaPDF = (factura, cliente, detalles, productos) => {
+export const generateFacturaPDF = (factura, cliente, detalles, productos, itbisRate = 0.18) => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
@@ -66,23 +80,45 @@ export const generateFacturaPDF = (factura, cliente, detalles, productos) => {
     }
   };
 
-  // ESPACIO PARA LOGO DE LA EMPRESA (sin franja verde)
+  // ESPACIO PARA LOGO DE LA EMPRESA
   const logoX = 20;
   const logoY = 20;
   const logoWidth = 80;
   const logoHeight = 40;
   
-  // Marco visual para el logo (opcional - se puede quitar cuando se agregue el logo real)
-  doc.setDrawColor(COLORS.border);
-  doc.setLineWidth(1);
-  doc.rect(logoX, logoY, logoWidth, logoHeight);
+  // Intentar cargar el logo de la empresa
+  const companyLogo = getCompanyLogo();
   
-  // Placeholder text para el logo
-  addText('LOGO', logoX + logoWidth/2, logoY + logoHeight/2, {
-    fontSize: 10,
-    align: 'center',
-    color: COLORS.text
-  });
+  if (companyLogo) {
+    try {
+      // Agregar el logo real de la empresa
+      doc.addImage(companyLogo, 'PNG', logoX, logoY, logoWidth, logoHeight);
+    } catch (error) {
+      console.error('Error adding company logo to PDF:', error);
+      // Fallback al placeholder si hay error
+      doc.setDrawColor(COLORS.border);
+      doc.setLineWidth(1);
+      doc.rect(logoX, logoY, logoWidth, logoHeight);
+      
+      addText('LOGO', logoX + logoWidth/2, logoY + logoHeight/2, {
+        fontSize: 10,
+        align: 'center',
+        color: COLORS.text
+      });
+    }
+  } else {
+    // Marco visual para el logo (placeholder cuando no hay logo)
+    doc.setDrawColor(COLORS.border);
+    doc.setLineWidth(1);
+    doc.rect(logoX, logoY, logoWidth, logoHeight);
+    
+    // Placeholder text para el logo
+    addText('LOGO', logoX + logoWidth/2, logoY + logoHeight/2, {
+      fontSize: 10,
+      align: 'center',
+      color: COLORS.text
+    });
+  }
   
   // Título de la empresa al lado derecho
   currentY = 40;
@@ -301,7 +337,7 @@ export const generateFacturaPDF = (factura, cliente, detalles, productos) => {
   const totalsX = pageWidth - 90;
   const totalsWidth = 80;
   
-  const itbis = subtotalGeneral * 0.18; // ITBIS 18% (tasa dominicana)
+  const itbis = subtotalGeneral * itbisRate; // ITBIS dinámico
   const total = subtotalGeneral + itbis;
   
   // Fila Subtotal
@@ -318,7 +354,7 @@ export const generateFacturaPDF = (factura, cliente, detalles, productos) => {
   currentY += 7;
   
   // Fila ITBIS
-  addText('ITBIS 18%:', totalsX, currentY, {
+  addText(`ITBIS ${(itbisRate * 100).toFixed(0)}%:`, totalsX, currentY, {
     fontSize: 11,
     color: COLORS.text
   });
@@ -371,7 +407,7 @@ export const generateFacturaPDF = (factura, cliente, detalles, productos) => {
 };
 
 // Función para generar PDF de cotización (adaptada de generateFacturaPDF)
-export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos) => {
+export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos, itbisRate = 0.18) => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
@@ -424,17 +460,39 @@ export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos) 
   const logoWidth = 80;
   const logoHeight = 40;
   
-  // Marco visual para el logo
-  doc.setDrawColor(COLORS.border);
-  doc.setLineWidth(1);
-  doc.rect(logoX, logoY, logoWidth, logoHeight);
+  // Intentar cargar el logo de la empresa
+  const companyLogo = getCompanyLogo();
   
-  // Placeholder text para el logo
-  addText('LOGO', logoX + logoWidth/2, logoY + logoHeight/2, {
-    fontSize: 10,
-    align: 'center',
-    color: COLORS.text
-  });
+  if (companyLogo) {
+    try {
+      // Agregar el logo real de la empresa
+      doc.addImage(companyLogo, 'PNG', logoX, logoY, logoWidth, logoHeight);
+    } catch (error) {
+      console.error('Error adding company logo to PDF:', error);
+      // Fallback al placeholder si hay error
+      doc.setDrawColor(COLORS.border);
+      doc.setLineWidth(1);
+      doc.rect(logoX, logoY, logoWidth, logoHeight);
+      
+      addText('LOGO', logoX + logoWidth/2, logoY + logoHeight/2, {
+        fontSize: 10,
+        align: 'center',
+        color: COLORS.text
+      });
+    }
+  } else {
+    // Marco visual para el logo (placeholder cuando no hay logo)
+    doc.setDrawColor(COLORS.border);
+    doc.setLineWidth(1);
+    doc.rect(logoX, logoY, logoWidth, logoHeight);
+    
+    // Placeholder text para el logo
+    addText('LOGO', logoX + logoWidth/2, logoY + logoHeight/2, {
+      fontSize: 10,
+      align: 'center',
+      color: COLORS.text
+    });
+  }
   
   // Título COTIZACIÓN al lado derecho
   currentY = 40;
@@ -652,7 +710,7 @@ export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos) 
   const totalsX = pageWidth - 90;
   const totalsWidth = 80;
   
-  const itbis = subtotalGeneral * 0.18; // ITBIS 18%
+  const itbis = subtotalGeneral * itbisRate; // ITBIS dinámico
   const total = subtotalGeneral + itbis;
   
   // Fila Subtotal
@@ -669,7 +727,7 @@ export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos) 
   currentY += 7;
   
   // Fila ITBIS
-  addText('ITBIS 18%:', totalsX, currentY, {
+  addText(`ITBIS ${(itbisRate * 100).toFixed(0)}%:`, totalsX, currentY, {
     fontSize: 11,
     color: COLORS.text
   });

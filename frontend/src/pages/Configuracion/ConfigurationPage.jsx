@@ -18,12 +18,47 @@ const ConfigurationPage = () => {
   const [toast, setToast] = useState({ isVisible: false, type: 'success', message: '' })
 
   useEffect(() => {
-    // Load company data from config
-    setFormData({
-      nombre: empresaConfig.nombre,
-      rnc: empresaConfig.rnc,
-      logo: null
-    })
+    // Load saved company data from localStorage first, then fallback to config
+    const savedData = localStorage.getItem('empresaData')
+    const savedLogo = localStorage.getItem('empresaLogo')
+    
+    if (savedData) {
+      try {
+        const companyData = JSON.parse(savedData)
+        setFormData({
+          nombre: companyData.nombre || empresaConfig.nombre,
+          rnc: companyData.rnc || empresaConfig.rnc,
+          logo: companyData.logo || null
+        })
+      } catch (error) {
+        console.error('Error loading saved company data:', error)
+        setFormData({
+          nombre: empresaConfig.nombre,
+          rnc: empresaConfig.rnc,
+          logo: null
+        })
+      }
+    } else {
+      setFormData({
+        nombre: empresaConfig.nombre,
+        rnc: empresaConfig.rnc,
+        logo: null
+      })
+    }
+    
+    // Load saved logo from localStorage
+    if (savedLogo) {
+      try {
+        const logoData = JSON.parse(savedLogo)
+        setFormData(prev => ({
+          ...prev,
+          logo: logoData.data // Use base64 data directly
+        }))
+        setLogoPreview(logoData.data)
+      } catch (error) {
+        console.error('Error loading saved logo:', error)
+      }
+    }
   }, [])
 
   const showToast = (type, message) => {
@@ -42,7 +77,7 @@ const ConfigurationPage = () => {
     }))
   }
 
-  const handleLogoUpload = (e) => {
+  const handleLogoUpload = async (e) => {
     const file = e.target.files[0]
     if (file) {
       // Validate file type
@@ -57,23 +92,57 @@ const ConfigurationPage = () => {
         return
       }
 
-      setFormData(prev => ({
-        ...prev,
-        logo: file
-      }))
-
-      // Create preview
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setLogoPreview(e.target.result)
+      try {
+        // Create a unique filename
+        const timestamp = Date.now()
+        const fileExtension = file.name.split('.').pop()
+        const fileName = `empresa-logo-${timestamp}.${fileExtension}`
+        
+        // Convert file to base64 for saving
+        const reader = new FileReader()
+        reader.onload = async (e) => {
+          const base64Data = e.target.result
+          
+          // Save to localStorage for now (in a real app, you'd save to backend)
+          const logoData = {
+            fileName: fileName,
+            data: base64Data,
+            timestamp: timestamp
+          }
+          
+          localStorage.setItem('empresaLogo', JSON.stringify(logoData))
+          
+          // Update form data with the saved logo data
+          setFormData(prev => ({
+            ...prev,
+            logo: base64Data,
+            logoFile: file
+          }))
+          
+          // Create preview
+          setLogoPreview(base64Data)
+          
+          showToast('success', 'Logo guardado exitosamente')
+        }
+        reader.readAsDataURL(file)
+        
+      } catch (error) {
+        console.error('Error saving logo:', error)
+        showToast('error', 'Error al guardar el logo')
       }
-      reader.readAsDataURL(file)
     }
   }
 
   const handleSave = () => {
-    // Here you would typically save to backend or localStorage
-    // For now, we'll just show a success message
+    // Save company data to localStorage
+    const companyData = {
+      nombre: formData.nombre,
+      rnc: formData.rnc,
+      logo: formData.logo,
+      timestamp: Date.now()
+    }
+    
+    localStorage.setItem('empresaData', JSON.stringify(companyData))
     console.log('Saving company data:', formData)
     showToast('success', 'Información de la empresa guardada exitosamente')
     setIsEditing(false)
@@ -199,12 +268,12 @@ const ConfigurationPage = () => {
                     </span>
                   </div>
                   
-                  {(logoPreview || empresaConfig.logo) && (
+                  {(logoPreview || formData.logo) && (
                     <div className="mt-4">
                       <p className="text-sm font-medium text-gray-700 mb-2">Vista previa:</p>
                       <div className="inline-block p-4 border divider-border rounded-lg bg-white">
                         <img
-                          src={logoPreview || empresaConfig.logo}
+                          src={logoPreview || formData.logo}
                           alt="Logo preview"
                           className="h-20 w-auto object-contain"
                         />
@@ -214,10 +283,10 @@ const ConfigurationPage = () => {
                 </div>
               ) : (
                 <div className="p-3 bg-gray-50 rounded-md border divider-border">
-                  {empresaConfig.logo ? (
+                  {formData.logo ? (
                     <div className="flex items-center gap-3">
                       <img
-                        src={empresaConfig.logo}
+                        src={formData.logo}
                         alt="Logo de la empresa"
                         className="h-12 w-auto object-contain"
                       />
