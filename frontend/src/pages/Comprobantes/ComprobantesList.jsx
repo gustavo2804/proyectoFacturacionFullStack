@@ -31,6 +31,7 @@ const ComprobantesList = () => {
     const restantes = serie.hasta && serie.desde ? Math.max(0, serie.hasta - serie.numero_actual) : 0;
     const estaPorAgotarse = restantes <= 5 && restantes > 0;
     const estaAgotado = restantes === 0;
+    const estaAnulado = serie.anulado;
     
     // El tipo de comprobante ahora viene como objeto completo desde el serializer
     const tipoComprobante = serie.tipo_comprobante;
@@ -38,13 +39,23 @@ const ComprobantesList = () => {
       ? `${tipoComprobante.tipo_comprobante} - ${tipoComprobante.descripcion}`
       : 'Sin tipo';
     
+    // Determinar el estado (prioridad: Anulado > Agotado > Por agotarse > Disponible)
+    let estado = 'Disponible';
+    if (estaAnulado) {
+      estado = 'Anulado';
+    } else if (estaAgotado) {
+      estado = 'Agotado';
+    } else if (estaPorAgotarse) {
+      estado = 'Por agotarse';
+    }
+    
     return {
       id: serie.id,
       rango: `${serie.desde || 'N/A'} - ${serie.hasta || 'N/A'}`,
       tipo_comprobante: tipoComprobanteTexto,
       numero_actual: serie.numero_actual,
       restantes: restantes,
-      estado: estaAgotado ? 'Agotado' : estaPorAgotarse ? 'Por agotarse' : 'Disponible',
+      estado: estado,
       fecha_vencimiento: new Date(serie.fecha_vencimiento).toLocaleDateString('es-DO'),
     };
   })

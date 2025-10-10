@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -18,6 +19,18 @@ import { SidebarNavigationProvider } from "@/contexts/SidebarContext";
 import ComprobantesAlert from "./ComprobantesAlert";
 
 export default function Layout({children}) {
+  const location = useLocation();
+  
+  // Rutas que no deben mostrar el layout completo (solo el contenido)
+  const authRoutes = ['/login', '/register'];
+  const isAuthRoute = authRoutes.includes(location.pathname);
+
+  // Si es una ruta de autenticación, solo mostrar el contenido
+  if (isAuthRoute) {
+    return <>{children}</>;
+  }
+
+  // Para rutas protegidas, mostrar el layout completo
   return (
     <SidebarNavigationProvider>
       <SidebarProvider>

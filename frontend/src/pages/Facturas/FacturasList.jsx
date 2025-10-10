@@ -5,6 +5,7 @@ import ClientesApi from '../../services/clientes.api'
 import { TipoComprobantesApi } from '../../services/comprobantes.api'
 import AdvancedTable from '../../components/AdvancedTable'
 import { generateFacturaPDF } from '../../utils/pdfGenerator'
+import { formatDisplayNumber } from '../../utils/numberFormatter'
 import { Button } from '../../components/ui/button'
 import { FileText } from 'lucide-react'
 import Toast from '../../components/ui/toast'
@@ -142,7 +143,7 @@ const FacturasList = () => {
       cliente: cliente?.nombre || 'Sin cliente',
       fecha_emision: new Date(factura.fecha_emision).toLocaleDateString('es-DO'),
       estado: factura.estado,
-      total: `$${parseFloat(factura.total).toLocaleString('es-DO', { minimumFractionDigits: 2 })}`,
+      total: formatDisplayNumber(factura.total),
       tipo_comprobante: tipoComprobante?.descripcion || 'N/A'
     }
   })

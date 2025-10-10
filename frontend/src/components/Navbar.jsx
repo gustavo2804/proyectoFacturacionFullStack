@@ -4,21 +4,23 @@ import { NavItem } from "./NavItem";
 import { navigationConfig } from "../config/navigationConfig";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
-import { Settings } from "lucide-react";
+import { Settings, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 export function Navbar({sidebarTrigger}) {
   const [activeItem, setActiveItem] = useState('Home');
   const [searchValue, setSearchValue] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const { menuItems } = navigationConfig;
   
   // User data for NavUser component
   const userData = {
-    name: "shadcn",
-    email: "m@example.com",
+    name: user?.first_name ? `${user.first_name} ${user.last_name}` : user?.username || "Usuario",
+    email: user?.email || "usuario@ejemplo.com",
     avatar: "/avatars/shadcn.jpg",
   };
 
@@ -52,6 +54,15 @@ export function Navbar({sidebarTrigger}) {
 
   const handleSettingsClick = () => {
     navigate('/configuracion');
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
   };
 
   return (
@@ -128,6 +139,17 @@ export function Navbar({sidebarTrigger}) {
             <Settings className="h-4 w-4" />
           </Button>
           
+          {/* Logout button */}
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={handleLogout}
+            className="h-8 w-8 p-0 text-slate-700 hover:bg-red-500 hover:text-white transition-colors"
+            title="Cerrar sesión"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+          
           {/* User dropdown */}
           <div className="hidden sm:block">
             <NavUser user={userData} />
@@ -140,7 +162,9 @@ export function Navbar({sidebarTrigger}) {
             className="h-8 w-8 p-0 text-slate-700 hover:bg-emerald-500 hover:text-white transition-colors sm:hidden"
           >
             <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
-              <span className="text-white text-xs font-medium">CN</span>
+              <span className="text-white text-xs font-medium">
+                {user?.first_name ? user.first_name[0] : user?.username ? user.username[0] : 'U'}
+              </span>
             </div>
           </Button>
         </div>

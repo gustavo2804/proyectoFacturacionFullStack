@@ -1,0 +1,92 @@
+import { useState, useEffect } from 'react';
+import { DetalleFacturaApi } from '@/services/facturas.api';
+
+/**
+ * Hook personalizado para manejar los detalles de la factura
+ */
+export const useFacturaDetalles = (id, isEditMode) => {
+  const [detalles, setDetalles] = useState([]);
+
+  useEffect(() => {
+    if (isEditMode && id) {
+      loadDetalles();
+    }
+  }, [id, isEditMode]);
+
+  const loadDetalles = async () => {
+    try {
+      const detallesData = await DetalleFacturaApi.getByFacturaId(id);
+      console.log('Detalles cargados para factura ID', id, ':', detallesData);
+      console.log('Cantidad de detalles:', detallesData.length);
+      
+      // Procesar los detalles para asegurar que el producto sea solo el ID
+      const detallesProcesados = detallesData.map(detalle => ({
+        ...detalle,
+        producto: detalle.producto?.id || detalle.producto || '',
+        descripcion: detalle.descripcion || '',
+        cantidad: parseInt(detalle.cantidad) || 0,
+        precio_unitario: parseFloat(detalle.precio_unitario) || 0,
+        subtotal: parseFloat(detalle.subtotal) || 0
+      }));
+      
+      setDetalles(detallesProcesados);
+    } catch (error) {
+      console.error('Error al cargar detalles:', error);
+      throw error;
+    }
+  };
+
+  const handleAddDetalle = () => {
+    const nuevoDetalle = {
+      id: Date.now(), // ID temporal
+      producto: '',
+      descripcion: '',
+      cantidad: 1,
+      precio_unitario: 0,
+      subtotal: 0
+    };
+    setDetalles(prev => [...prev, nuevoDetalle]);
+  };
+
+  const handleDetalleChange = (index, field, value) => {
+    setDetalles(prev => {
+      const nuevosDetalles = [...prev];
+      nuevosDetalles[index] = {
+        ...nuevosDetalles[index],
+        [field]: value
+      };
+
+      // Calcular subtotal cuando cambia cantidad o precio
+      if (field === 'cantidad' || field === 'precio_unitario') {
+        const cantidad = field === 'cantidad' ? parseFloat(value) || 0 : parseFloat(nuevosDetalles[index].cantidad) || 0;
+        const precio = field === 'precio_unitario' ? parseFloat(value) || 0 : parseFloat(nuevosDetalles[index].precio_unitario) || 0;
+        nuevosDetalles[index].subtotal = cantidad * precio;
+      }
+
+      return nuevosDetalles;
+    });
+  };
+
+  const handleRemoveDetalle = (index) => {
+    setDetalles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleProductoChange = (index, productoId, productos) => {
+    const producto = productos.find(p => p.id === parseInt(productoId));
+    if (producto) {
+      handleDetalleChange(index, 'producto', productoId);
+      handleDetalleChange(index, 'precio_unitario', parseFloat(producto.precio_venta) || 0);
+    }
+  };
+
+  return {
+    detalles,
+    setDetalles,
+    handleAddDetalle,
+    handleDetalleChange,
+    handleRemoveDetalle,
+    handleProductoChange,
+    loadDetalles
+  };
+};
+

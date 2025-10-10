@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
-import { Search, Package, ChevronDown } from 'lucide-react';
+import { Search, Package, ChevronDown, Plus } from 'lucide-react';
 import { Input } from './ui/input';
+import { Button } from './ui/button';
 
 const SearchSelectProducto = ({ 
   value, 
@@ -9,7 +10,8 @@ const SearchSelectProducto = ({
   placeholder = "Buscar y seleccionar producto...",
   isDisabled = false,
   onProductoSelect = null,
-  topLimit = 10
+  topLimit = 10,
+  onCrearArticulo = null
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -146,7 +148,7 @@ const SearchSelectProducto = ({
       {/* Dropdown de resultados */}
       {(isOpen || searchTerm) && (
         <div 
-          className="fixed bg-white border divider-border shadow-lg rounded-md max-h-60 overflow-auto [[memory:7140669]]"
+          className="fixed bg-white border divider-border shadow-lg rounded-md max-h-60 overflow-auto"
           style={{
             top: `${dropdownPosition.top}px`,
             left: `${dropdownPosition.left}px`,
@@ -155,7 +157,7 @@ const SearchSelectProducto = ({
           }}
         >
             {/* Header con información */}
-            <div className="sticky top-0 bg-emerald-50 px-3 py-2 border-b text-xs text-emerald-700">
+            <div className="sticky top-0 bg-white px-3 py-2 border-b divider-border text-xs text-gray-600">
               {productos.length === 0 ? (
                 'No hay productos cargados'
               ) : !searchTerm ? (
@@ -180,22 +182,22 @@ const SearchSelectProducto = ({
                   <div
                     key={producto.id}
                     onClick={() => handleSelectChange(producto.id.toString())}
-                    className="flex items-center gap-3 px-3 py-2 hover:bg-emerald-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                    className="flex items-center gap-3 px-3 py-2 hover:bg-emerald-500 hover:text-white cursor-pointer border-b divider-border last:border-b-0 transition-colors"
                   >
-                    <Package className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                    <Package className="h-4 w-4 flex-shrink-0" />
                     <div className="flex flex-col flex-1 min-w-0">
-                      <span className="font-medium text-gray-900 truncate">{producto.nombre}</span>
-                      <div className="flex justify-between items-center text-sm text-gray-500">
+                      <span className="font-medium truncate">{producto.nombre}</span>
+                      <div className="flex justify-between items-center text-sm opacity-75">
                         <span className="truncate">Precio: ${parseFloat(producto.precio || 0).toFixed(2)}</span>
                         {producto.codigo && (
-                          <span className="text-xs bg-gray-100 px-2 py-0.5 rounded ml-2 flex-shrink-0">
+                          <span className="text-xs bg-white bg-opacity-20 px-2 py-0.5 rounded ml-2 flex-shrink-0">
                             {producto.codigo}
                           </span>
                         )}
                       </div>
                     </div>
                     {producto.id === value && (
-                      <div className="h-2 w-2 bg-emerald-500 rounded-full flex-shrink-0"></div>
+                      <div className="h-2 w-2 bg-white rounded-full flex-shrink-0"></div>
                     )}
                   </div>
                 ))
@@ -203,8 +205,29 @@ const SearchSelectProducto = ({
             </div>
             
             {/* Footer con acción */}
-            <div className="sticky bottom-0 bg-gray-50 px-3 py-2 border-t text-xs text-gray-600">
-              {searchTerm ? 'Selecciona un producto de los resultados' : 'Escribe para buscar más productos'}
+            <div className="sticky bottom-0 bg-white px-3 py-2 border-t divider-border">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-600">
+                  {searchTerm ? 'Selecciona un producto de los resultados' : 'Escribe para buscar más productos'}
+                </span>
+                {onCrearArticulo && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsOpen(false);
+                      setSearchTerm('');
+                      onCrearArticulo();
+                    }}
+                    className="h-6 px-2 text-xs bg-emerald-500 text-white hover:bg-emerald-600 border-emerald-500"
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    Crear
+                  </Button>
+                )}
+              </div>
             </div>
         </div>
       )}

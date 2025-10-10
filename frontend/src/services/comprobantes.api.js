@@ -73,6 +73,10 @@ const SerieComprobantesApi = {
         const response = await api.delete(`/seriecomprobantes/${id}`)
         return response.data
     },
+    anular: async (id) => {
+        const response = await api.post(`/seriecomprobantes/${id}/anular/`)
+        return response.data
+    },
     getAlertas: async (limite = 5) => {
         const response = await api.get(`/seriecomprobantes/alertas/?limite=${limite}`)
         return response.data

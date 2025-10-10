@@ -40,6 +40,13 @@ class DetalleCotizacionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
     serializer_class = DetalleCotizacionSerializer
 
+    def get_queryset(self):
+        queryset = DetalleCotizacion.objects.all()
+        cotizacion_id = self.request.query_params.get('cotizacion')
+        if cotizacion_id:
+            queryset = queryset.filter(cotizacion_id=cotizacion_id)
+        return queryset
+
     @action(detail=False, methods=['get'])
     def by_cotizacion(self, request):
         cotizacion_id = request.query_params.get('cotizacion')

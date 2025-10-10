@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import CotizacionesApi from '../../services/cotizaciones.api'
 import ClientesApi from '../../services/clientes.api'
 import AdvancedTable from '../../components/AdvancedTable'
+import { formatDisplayNumber } from '../../utils/numberFormatter'
 import Toast from '../../components/ui/toast'
 
 const CotizacionesList = () => {
@@ -57,7 +58,7 @@ const CotizacionesList = () => {
       fecha_emision: new Date(cotizacion.fecha_emision).toLocaleDateString('es-DO'),
       fecha_vencimiento: new Date(cotizacion.fecha_vencimiento).toLocaleDateString('es-DO'),
       estado: cotizacion.anulado ? 'Anulada' : 'Activa',
-      total: `$${parseFloat(cotizacion.total).toLocaleString('es-DO', { minimumFractionDigits: 2 })}`,
+      total: formatDisplayNumber(cotizacion.total),
     }
   })
 

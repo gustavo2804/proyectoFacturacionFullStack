@@ -143,27 +143,31 @@ export default function AdvancedTable({
     <div className="w-full max-w-6xl mx-auto">
       <Card className="bg-white border rounded-xl divider-border shadow-md">
         <CardHeader className="pb-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-            
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+          <div className="flex flex-col gap-4">
+            {/* Título y botón de agregar */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+              
               {/* Botón de agregar */}
               {enableAdd && (
                 <Button
                   onClick={handleAdd}
-                  className="gap-2 rounded-md border-emerald-500 bg-emerald-500 text-white hover:bg-emerald-600 transition-colors"
+                  className="gap-2 rounded-md border-emerald-500 bg-emerald-500 text-white hover:bg-emerald-600 transition-colors w-full sm:w-auto"
                 >
                   {addButtonText}
                 </Button>
               )}
-
+            </div>
+            
+            {/* Búsqueda y columnas */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
               {/* Input de búsqueda */}
-              <div className="relative [&>input:focus]:ring-2 [&>input:focus]:ring-emerald-500 w-full sm:w-80">
+              <div className="relative flex-1 [&>input:focus]:ring-2 [&>input:focus]:ring-emerald-500">
                 <Input
                   placeholder={searchPlaceholder}
                   value={filterText}
                   onChange={(e) => setFilterText(e.target.value)}
-                  className="w-full h-8 sm:h-9 pl-3 pr-4 text-xs sm:text-sm border divider-border rounded-md focus:outline-none focus:!ring-emerald-500 focus:border-transparent bg-white text-slate-700 placeholder:text-slate-500 hover:bg-slate-50 transition-colors"
+                  className="w-full h-9 pl-3 pr-4 text-sm border divider-border rounded-md focus:outline-none focus:!ring-emerald-500 focus:border-transparent bg-white text-slate-700 placeholder:text-slate-500 hover:bg-slate-50 transition-colors"
                 />
               </div>
 
@@ -172,9 +176,10 @@ export default function AdvancedTable({
                 <DropdownMenuTrigger asChild>
                   <Button 
                     variant="outline" 
-                    className="gap-2 rounded-md border-emerald-500 bg-white text-slate-700 hover:bg-emerald-500 hover:text-white transition-colors"
+                    className="gap-2 rounded-md border-emerald-500 bg-white text-slate-700 hover:bg-emerald-500 hover:text-white transition-colors whitespace-nowrap"
                   >
-                    Columns
+                    <span className="hidden sm:inline">Columns</span>
+                    <span className="sm:hidden">Columnas</span>
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>

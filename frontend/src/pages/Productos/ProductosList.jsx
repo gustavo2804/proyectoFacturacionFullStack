@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ProductosApi from '../../services/productos.api'
 import AdvancedTable from '../../components/AdvancedTable'
+import { formatDisplayNumber } from '../../utils/numberFormatter'
 import Toast from '../../components/ui/toast'
 
 const ProductosList = () => {
@@ -42,8 +43,8 @@ const ProductosList = () => {
     codigo: producto.codigo,
     nombre: producto.nombre,
     descripcion: producto.descripcion,
-    precio_compra: `$${parseFloat(producto.precio_compra).toFixed(2)}`,
-    precio_venta: `$${parseFloat(producto.precio_venta).toFixed(2)}`,
+    precio_compra: formatDisplayNumber(producto.precio_compra),
+    precio_venta: formatDisplayNumber(producto.precio_venta),
     fecha_creacion: new Date(producto.fecha_creacion).toLocaleDateString('es-DO')
   }))
 

@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
-import { Search, Users, ChevronDown } from 'lucide-react';
+import { Search, Users, ChevronDown, Plus } from 'lucide-react';
 import { Input } from './ui/input';
+import { Button } from './ui/button';
 import { 
   Select, 
   SelectContent, 
@@ -15,7 +16,8 @@ const SearchSelectCliente = ({
   clientes = [],
   placeholder = "Buscar y seleccionar cliente...",
   isDisabled = false,
-  topLimit = 10
+  topLimit = 10,
+  onCrearCliente = null
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -139,7 +141,7 @@ const SearchSelectCliente = ({
       {/* Dropdown de resultados */}
       {(isOpen || searchTerm) && (
         <div 
-          className="fixed bg-white border divider-border shadow-lg rounded-md max-h-60 overflow-auto [[memory:7140669]]"
+          className="fixed bg-white border divider-border shadow-lg rounded-md max-h-60 overflow-auto"
           style={{
             top: `${dropdownPosition.top}px`,
             left: `${dropdownPosition.left}px`,
@@ -148,7 +150,7 @@ const SearchSelectCliente = ({
           }}
         >
             {/* Header con información */}
-            <div className="sticky top-0 bg-emerald-50 px-3 py-2 border-b text-xs text-emerald-700">
+            <div className="sticky top-0 bg-white px-3 py-2 border-b divider-border text-xs text-gray-600">
               {!searchTerm ? (
                 `Top ${Math.min(topLimit, clientes.length)} clientes`
               ) : (
@@ -167,26 +169,42 @@ const SearchSelectCliente = ({
                   <div
                     key={cliente.id}
                     onClick={() => handleSelectChange(cliente.id.toString())}
-                    className="flex items-center gap-3 px-3 py-2 hover:bg-emerald-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                    className="flex items-center gap-3 px-3 py-2 hover:bg-emerald-500 hover:text-white cursor-pointer border-b divider-border last:border-b-0 transition-colors"
                   >
-                    <Users className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                    
                     <div className="flex flex-col flex-1 min-w-0">
-                      <span className="font-medium text-gray-900 truncate">{cliente.nombre}</span>
-                      <span className="text-sm text-gray-500 truncate">
-                        {cliente.tipo_documento}: {cliente.numero_documento || 'Sin documento'}
-                      </span>
+                      <span className="text-sm text-gray-700 font-medium truncate">{cliente.nombre.toLowerCase()}</span>
                     </div>
-                    {cliente.id === value && (
-                      <div className="h-2 w-2 bg-emerald-500 rounded-full flex-shrink-0"></div>
-                    )}
+                   
                   </div>
                 ))
               )}
             </div>
             
             {/* Footer con acción */}
-            <div className="sticky bottom-0 bg-gray-50 px-3 py-2 border-t text-xs text-gray-600">
-              {searchTerm ? 'Selecciona un cliente de los resultados' : 'Escribe para buscar más clientes'}
+            <div className="sticky bottom-0 bg-white px-3 py-2 border-t divider-border">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-600">
+                  {searchTerm ? 'Selecciona un cliente de los resultados' : 'Escribe para buscar más clientes'}
+                </span>
+                {onCrearCliente && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsOpen(false);
+                      setSearchTerm('');
+                      onCrearCliente();
+                    }}
+                    className="h-6 px-2 text-xs bg-emerald-500 text-white hover:bg-emerald-600 border-emerald-500"
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    Crear
+                  </Button>
+                )}
+              </div>
             </div>
         </div>
       )}

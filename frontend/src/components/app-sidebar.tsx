@@ -164,14 +164,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar collapsible="icon" {...props} className="border-r border-gray-200 mt-14">
-      <SidebarHeader>
+    <Sidebar collapsible="icon" {...props} className="border-r divider-border bg-white mt-14">
+      <SidebarHeader className="bg-white">
         {/* Logo area - will be handled by navbar */}
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="bg-white">
         <NavCustom items={navigationConfig.menuItems} />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="bg-white">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton 

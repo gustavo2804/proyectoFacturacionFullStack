@@ -6,7 +6,7 @@ const ProductosApi = {
         return response.data
     },
     getById: async (id) => {
-        const response = await api.get(`/productos/${id}`)
+        const response = await api.get(`/productos/${id}/`)
         return response.data
     },
     create: async (producto) => {
@@ -14,11 +14,11 @@ const ProductosApi = {
         return response.data
     },
     update: async (id, producto) => {
-        const response = await api.put(`/productos/${id}`, producto)
+        const response = await api.put(`/productos/${id}/`, producto)
         return response.data
     },
     delete: async (id) => {
-        const response = await api.delete(`/productos/${id}`)
+        const response = await api.delete(`/productos/${id}/`)
         return response.data
     }
 }

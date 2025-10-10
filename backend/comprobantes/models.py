@@ -28,6 +28,7 @@ class SerieComprobante(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
     fecha_vencimiento = models.DateField()
+    anulado = models.BooleanField(default=False, verbose_name="Anulado")
 
     def __str__(self):
         return f"{self.tipo_comprobante.tipo_comprobante} - {self.desde} al {self.hasta}"

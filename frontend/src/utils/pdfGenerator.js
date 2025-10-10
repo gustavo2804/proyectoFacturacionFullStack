@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import { empresaConfig } from '../config/empresaConfig';
+import { formatNumberForPDF } from './numberFormatter';
 
 // Función para obtener el logo de la empresa desde localStorage
 const getCompanyLogo = () => {
@@ -278,7 +279,11 @@ export const generateFacturaPDF = (factura, cliente, detalles, productos, itbisR
     tableX = tableStartX;
     
     // Concepto/Producto
-    addText(producto?.nombre || 'Producto no encontrado', tableX + 2, currentY + 6, {
+    const nombreProducto = producto?.nombre || 'Producto no encontrado';
+    const descripcionProducto = detalle.descripcion || '';
+    const textoProducto = descripcionProducto ? `${nombreProducto} - ${descripcionProducto}` : nombreProducto;
+    
+    addText(textoProducto, tableX + 2, currentY + 6, {
       fontSize: 9,
       color: COLORS.text,
       maxWidth: columnWidths[0] - 4,
@@ -295,7 +300,7 @@ export const generateFacturaPDF = (factura, cliente, detalles, productos, itbisR
     
     // Precio unitario
     tableX += columnWidths[1];
-    addText(`RD$ ${parseFloat(detalle.precio_unitario).toFixed(2)}`, tableX + 2, currentY + 6, {
+    addText(`RD$ ${formatNumberForPDF(detalle.precio_unitario)}`, tableX + 2, currentY + 6, {
       fontSize: 9,
       color: COLORS.text,
       align: 'left'
@@ -303,7 +308,7 @@ export const generateFacturaPDF = (factura, cliente, detalles, productos, itbisR
     
     // Total
     tableX += columnWidths[2];
-    addText(`RD$ ${subtotalProducto.toFixed(2)}`, tableX + 2, currentY + 6, {
+    addText(`RD$ ${formatNumberForPDF(subtotalProducto)}`, tableX + 2, currentY + 6, {
       fontSize: 9,
       color: COLORS.text,
       align: 'left'
@@ -345,7 +350,7 @@ export const generateFacturaPDF = (factura, cliente, detalles, productos, itbisR
     fontSize: 11,
     color: COLORS.text
   });
-  addText(`RD$ ${subtotalGeneral.toFixed(2)}`, totalsX + totalsWidth - 5, currentY, {
+  addText(`RD$ ${formatNumberForPDF(subtotalGeneral)}`, totalsX + totalsWidth - 5, currentY, {
     fontSize: 11,
     color: COLORS.text,
     align: 'right'
@@ -358,7 +363,7 @@ export const generateFacturaPDF = (factura, cliente, detalles, productos, itbisR
     fontSize: 11,
     color: COLORS.text
   });
-  addText(`RD$ ${itbis.toFixed(2)}`, totalsX + totalsWidth - 5, currentY, {
+  addText(`RD$ ${formatNumberForPDF(itbis)}`, totalsX + totalsWidth - 5, currentY, {
     fontSize: 11,
     color: COLORS.text,
     align: 'right'
@@ -380,7 +385,7 @@ export const generateFacturaPDF = (factura, cliente, detalles, productos, itbisR
     fontStyle: 'bold',
     color: COLORS.white
   });
-  addText(`RD$ ${total.toFixed(2)}`, totalsX + totalsWidth - 5, currentY + 4, {
+  addText(`RD$ ${formatNumberForPDF(total)}`, totalsX + totalsWidth - 5, currentY + 4, {
     fontSize: 14,
     fontStyle: 'bold',
     color: COLORS.white,
@@ -494,14 +499,42 @@ export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos, 
     });
   }
   
-  // Título COTIZACIÓN al lado derecho
-  currentY = 40;
+  // Título COTIZACIÓN y fechas en la parte superior derecha
+  currentY = 20;
   addText('COTIZACIÓN', pageWidth - 60, currentY, {
     fontSize: 18,
     fontStyle: 'bold',
     align: 'center',
     color: COLORS.primary
   });
+  
+  // Fechas en la parte superior derecha
+  currentY += 15;
+  addText(`Fecha de emisión: ${new Date(cotizacion.fecha_emision).toLocaleDateString('es-DO')}`, pageWidth - 60, currentY, {
+    fontSize: 10,
+    fontStyle: 'bold',
+    align: 'center',
+    color: COLORS.text
+  });
+  
+  currentY += 6;
+  addText(`Cotización No: ${cotizacion.numero_cotizacion || 'N/A'}`, pageWidth - 60, currentY, {
+    fontSize: 10,
+    fontStyle: 'bold',
+    align: 'center',
+    color: COLORS.text
+  });
+  
+  // Fecha de vencimiento (específica para cotizaciones)
+  if (cotizacion.fecha_vencimiento) {
+    currentY += 6;
+    addText(`Válida hasta: ${new Date(cotizacion.fecha_vencimiento).toLocaleDateString('es-DO')}`, pageWidth - 60, currentY, {
+      fontSize: 10,
+      fontStyle: 'bold',
+      align: 'center',
+      color: COLORS.accent
+    });
+  }
   
   currentY = logoY + logoHeight + 30;
 
@@ -525,20 +558,7 @@ export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos, 
   });
   
   currentY += 6;
-  addText(`Dirección: ${cliente?.direccion || 'No especificada'}`, leftColX, currentY, {
-    fontSize: 10,
-    color: COLORS.text,
-    maxWidth: colWidth
-  });
-  
-  currentY += 6;
   addText(`RNC: ${cliente?.numero_documento || 'N/A'}`, leftColX, currentY, {
-    fontSize: 10,
-    color: COLORS.text
-  });
-  
-  currentY += 6;
-  addText(`Teléfono: ${cliente?.telefono || 'N/A'}`, leftColX, currentY, {
     fontSize: 10,
     color: COLORS.text
   });
@@ -559,49 +579,10 @@ export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos, 
   });
   
   currentY += 6;
-  addText(`Dirección: ${empresaConfig.direccion}`, rightColX, currentY, {
-    fontSize: 10,
-    color: COLORS.text,
-    maxWidth: colWidth
-  });
-  
-  currentY += 6;
   addText(`RNC: ${empresaConfig.rnc}`, rightColX, currentY, {
     fontSize: 10,
     color: COLORS.text
   });
-  
-  currentY += 6;
-  addText(`Teléfono: ${empresaConfig.telefono}`, rightColX, currentY, {
-    fontSize: 10,
-    color: COLORS.text
-  });
-
-  currentY += 15;
-
-  // FECHA Y NÚMERO DE COTIZACIÓN
-  addText(`Fecha de emisión: ${new Date(cotizacion.fecha_emision).toLocaleDateString('es-DO')}`, leftColX, currentY, {
-    fontSize: 11,
-    fontStyle: 'bold',
-    color: COLORS.text
-  });
-  
-  currentY += 6;
-  addText(`Cotización No: ${cotizacion.numero_cotizacion || 'N/A'}`, leftColX, currentY, {
-    fontSize: 11,
-    fontStyle: 'bold',
-    color: COLORS.text
-  });
-  
-  // Fecha de vencimiento (específica para cotizaciones)
-  if (cotizacion.fecha_vencimiento) {
-    currentY += 6;
-    addText(`Válida hasta: ${new Date(cotizacion.fecha_vencimiento).toLocaleDateString('es-DO')}`, leftColX, currentY, {
-      fontSize: 11,
-      fontStyle: 'bold',
-      color: COLORS.accent
-    });
-  }
 
   currentY += 15;
 
@@ -651,7 +632,11 @@ export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos, 
     tableX = tableStartX;
     
     // Concepto/Producto
-    addText(producto?.nombre || 'Producto no encontrado', tableX + 2, currentY + 6, {
+    const nombreProducto = producto?.nombre || 'Producto no encontrado';
+    const descripcionProducto = detalle.descripcion || '';
+    const textoProducto = descripcionProducto ? `${nombreProducto} - ${descripcionProducto}` : nombreProducto;
+    
+    addText(textoProducto, tableX + 2, currentY + 6, {
       fontSize: 9,
       color: COLORS.text,
       maxWidth: columnWidths[0] - 4,
@@ -668,7 +653,7 @@ export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos, 
     
     // Precio unitario
     tableX += columnWidths[1];
-    addText(`RD$ ${parseFloat(detalle.precio_unitario).toFixed(2)}`, tableX + 2, currentY + 6, {
+    addText(`RD$ ${formatNumberForPDF(detalle.precio_unitario)}`, tableX + 2, currentY + 6, {
       fontSize: 9,
       color: COLORS.text,
       align: 'left'
@@ -676,7 +661,7 @@ export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos, 
     
     // Total
     tableX += columnWidths[2];
-    addText(`RD$ ${subtotalProducto.toFixed(2)}`, tableX + 2, currentY + 6, {
+    addText(`RD$ ${formatNumberForPDF(subtotalProducto)}`, tableX + 2, currentY + 6, {
       fontSize: 9,
       color: COLORS.text,
       align: 'left'
@@ -718,7 +703,7 @@ export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos, 
     fontSize: 11,
     color: COLORS.text
   });
-  addText(`RD$ ${subtotalGeneral.toFixed(2)}`, totalsX + totalsWidth - 5, currentY, {
+  addText(`RD$ ${formatNumberForPDF(subtotalGeneral)}`, totalsX + totalsWidth - 5, currentY, {
     fontSize: 11,
     color: COLORS.text,
     align: 'right'
@@ -731,7 +716,7 @@ export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos, 
     fontSize: 11,
     color: COLORS.text
   });
-  addText(`RD$ ${itbis.toFixed(2)}`, totalsX + totalsWidth - 5, currentY, {
+  addText(`RD$ ${formatNumberForPDF(itbis)}`, totalsX + totalsWidth - 5, currentY, {
     fontSize: 11,
     color: COLORS.text,
     align: 'right'
@@ -753,7 +738,7 @@ export const generateCotizacionPDF = (cotizacion, cliente, detalles, productos, 
     fontStyle: 'bold',
     color: COLORS.white
   });
-  addText(`RD$ ${total.toFixed(2)}`, totalsX + totalsWidth - 5, currentY + 4, {
+  addText(`RD$ ${formatNumberForPDF(total)}`, totalsX + totalsWidth - 5, currentY + 4, {
     fontSize: 14,
     fontStyle: 'bold',
     color: COLORS.white,
