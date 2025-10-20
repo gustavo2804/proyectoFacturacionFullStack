@@ -16,7 +16,11 @@ const RegisterPage = () => {
     password: '',
     password_confirm: '',
     first_name: '',
-    last_name: ''
+    last_name: '',
+    empresa_nombre: '',
+    empresa_rnc: '',
+    empresa_telefono: '',
+    empresa_direccion: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState({ isVisible: false, type: 'success', message: '' });
@@ -40,8 +44,9 @@ const RegisterPage = () => {
     e.preventDefault();
     
     // Validaciones
-    if (!formData.username || !formData.email || !formData.password || !formData.password_confirm) {
-      showToast('error', 'Por favor completa todos los campos');
+    if (!formData.username || !formData.email || !formData.password || !formData.password_confirm || 
+        !formData.empresa_nombre || !formData.empresa_rnc) {
+      showToast('error', 'Por favor completa todos los campos obligatorios');
       return;
     }
 
@@ -60,19 +65,19 @@ const RegisterPage = () => {
       const result = await register(formData);
       
       if (result.success) {
-        showToast('success', 'Registro exitoso. Ahora puedes iniciar sesión.');
+        showToast('success', 'Empresa y usuario creados exitosamente. Ahora puedes iniciar sesión.');
         
         // Redirigir al login después de un breve delay
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       } else {
-        showToast('error', result.error || 'Error al crear la cuenta. Intenta nuevamente.');
+        showToast('error', result.error || 'Error al crear la empresa y usuario. Intenta nuevamente.');
       }
       
     } catch (error) {
       console.error('Error al registrarse:', error);
-      showToast('error', 'Error al crear la cuenta. Intenta nuevamente.');
+      showToast('error', 'Error al crear la empresa y usuario. Intenta nuevamente.');
     } finally {
       setIsLoading(false);
     }
@@ -86,108 +91,182 @@ const RegisterPage = () => {
             Crear Cuenta
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Regístrate para acceder al sistema de facturación
+            Registra tu empresa y crea tu cuenta de usuario
           </p>
         </div>
         
-        <Card className="bg-white border rounded-xl shadow-md">
+        <Card className="bg-white border border-gray-200 rounded-xl shadow-sm">
           <CardHeader>
             <CardTitle className="text-center text-lg font-medium text-gray-900">
-              Completa tus datos
+              Información de la Empresa y Usuario
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Sección de Empresa */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Información de la Empresa</h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="empresa_nombre" className="text-sm font-medium text-gray-700">
+                    Nombre de la Empresa *
+                  </Label>
+                  <Input
+                    id="empresa_nombre"
+                    type="text"
+                    value={formData.empresa_nombre}
+                    onChange={(e) => handleInputChange('empresa_nombre', e.target.value)}
+                    placeholder="Nombre de tu empresa"
+                    className="border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="empresa_rnc" className="text-sm font-medium text-gray-700">
+                    RNC *
+                  </Label>
+                  <Input
+                    id="empresa_rnc"
+                    type="text"
+                    value={formData.empresa_rnc}
+                    onChange={(e) => handleInputChange('empresa_rnc', e.target.value)}
+                    placeholder="123456789"
+                    className="border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="empresa_telefono" className="text-sm font-medium text-gray-700">
+                      Teléfono
+                    </Label>
+                    <Input
+                      id="empresa_telefono"
+                      type="tel"
+                      value={formData.empresa_telefono}
+                      onChange={(e) => handleInputChange('empresa_telefono', e.target.value)}
+                      placeholder="(809) 123-4567"
+                      className="border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="empresa_direccion" className="text-sm font-medium text-gray-700">
+                      Dirección
+                    </Label>
+                    <Input
+                      id="empresa_direccion"
+                      type="text"
+                      value={formData.empresa_direccion}
+                      onChange={(e) => handleInputChange('empresa_direccion', e.target.value)}
+                      placeholder="Dirección de la empresa"
+                      className="border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sección de Usuario */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Información del Usuario</h3>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="first_name" className="text-sm font-medium text-gray-700">
+                      Nombre
+                    </Label>
+                    <Input
+                      id="first_name"
+                      type="text"
+                      value={formData.first_name}
+                      onChange={(e) => handleInputChange('first_name', e.target.value)}
+                      placeholder="Tu nombre"
+                      className="border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="last_name" className="text-sm font-medium text-gray-700">
+                      Apellido
+                    </Label>
+                    <Input
+                      id="last_name"
+                      type="text"
+                      value={formData.last_name}
+                      onChange={(e) => handleInputChange('last_name', e.target.value)}
+                      placeholder="Tu apellido"
+                      className="border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="first_name" className="text-sm font-medium text-gray-700">
-                    Nombre
+                  <Label htmlFor="username" className="text-sm font-medium text-gray-700">
+                    Usuario *
                   </Label>
                   <Input
-                    id="first_name"
+                    id="username"
                     type="text"
-                    value={formData.first_name}
-                    onChange={(e) => handleInputChange('first_name', e.target.value)}
-                    placeholder="Tu nombre"
-                    className="border divider-border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    value={formData.username}
+                    onChange={(e) => handleInputChange('username', e.target.value)}
+                    placeholder="Nombre de usuario"
+                    className="border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="last_name" className="text-sm font-medium text-gray-700">
-                    Apellido
+                  <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                    Email *
                   </Label>
                   <Input
-                    id="last_name"
-                    type="text"
-                    value={formData.last_name}
-                    onChange={(e) => handleInputChange('last_name', e.target.value)}
-                    placeholder="Tu apellido"
-                    className="border divider-border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    placeholder="tu@email.com"
+                    className="border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     required
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="username" className="text-sm font-medium text-gray-700">
-                  Usuario
-                </Label>
-                <Input
-                  id="username"
-                  type="text"
-                  value={formData.username}
-                  onChange={(e) => handleInputChange('username', e.target.value)}
-                  placeholder="Nombre de usuario"
-                  className="border divider-border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  required
-                />
-              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                    Contraseña *
+                  </Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    placeholder="Mínimo 8 caracteres"
+                    className="border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    required
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  placeholder="tu@email.com"
-                  className="border divider-border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-                  Contraseña
-                </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  placeholder="Mínimo 8 caracteres"
-                  className="border divider-border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password_confirm" className="text-sm font-medium text-gray-700">
-                  Confirmar Contraseña
-                </Label>
-                <Input
-                  id="password_confirm"
-                  type="password"
-                  value={formData.password_confirm}
-                  onChange={(e) => handleInputChange('password_confirm', e.target.value)}
-                  placeholder="Repite tu contraseña"
-                  className="border divider-border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  required
-                />
+                <div className="space-y-2">
+                  <Label htmlFor="password_confirm" className="text-sm font-medium text-gray-700">
+                    Confirmar Contraseña *
+                  </Label>
+                  <Input
+                    id="password_confirm"
+                    type="password"
+                    value={formData.password_confirm}
+                    onChange={(e) => handleInputChange('password_confirm', e.target.value)}
+                    placeholder="Repite tu contraseña"
+                    className="border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    required
+                  />
+                </div>
               </div>
 
               <Button
@@ -195,13 +274,13 @@ const RegisterPage = () => {
                 disabled={isLoading}
                 className="w-full gap-2 rounded-md border-emerald-500 bg-emerald-500 text-white hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
+                {isLoading ? 'Creando empresa y usuario...' : 'Crear Empresa y Usuario'}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                ¿Ya tienes una cuenta?{' '}
+                ¿Ya tienes una empresa registrada?{' '}
                 <Link 
                   to="/login" 
                   className="font-medium text-emerald-600 hover:text-emerald-500 transition-colors"

@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from clientes.models import Cliente
 from productos.models import Producto
 from comprobantes.models import TipoComprobante, Comprobante
+from core.middleware import get_current_user
 
 class EstadoFactura(models.TextChoices):
     BORRADOR = 'Borrador'
@@ -21,8 +22,16 @@ class Factura(models.Model):
     estado = models.CharField(max_length=20, choices=EstadoFactura.choices, default=EstadoFactura.PENDIENTE)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     total = models.DecimalField(max_digits=10, decimal_places=2)
+    id_empresa = models.ForeignKey('config.Empresa', on_delete=models.CASCADE, related_name='facturas', null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.id_empresa_id:
+            user = get_current_user()
+            if user and hasattr(user, 'empresa') and user.empresa:
+                self.id_empresa = user.empresa
+        super().save(*args, **kwargs)
 
     def clean(self):
         super().clean()
@@ -52,6 +61,14 @@ class DetalleFactura(models.Model):
     cantidad = models.IntegerField()
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    id_empresa = models.ForeignKey('config.Empresa', on_delete=models.CASCADE, related_name='detalles_factura', null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.id_empresa_id:
+            user = get_current_user()
+            if user and hasattr(user, 'empresa') and user.empresa:
+                self.id_empresa = user.empresa
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Detalle de factura {self.factura.numero_factura} - {self.producto.nombre}"
@@ -63,8 +80,16 @@ class Cotizacion(models.Model):
     anulado = models.BooleanField(default=False)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     total = models.DecimalField(max_digits=10, decimal_places=2)
+    id_empresa = models.ForeignKey('config.Empresa', on_delete=models.CASCADE, related_name='cotizaciones', null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.id_empresa_id:
+            user = get_current_user()
+            if user and hasattr(user, 'empresa') and user.empresa:
+                self.id_empresa = user.empresa
+        super().save(*args, **kwargs)
 
 class DetalleCotizacion(models.Model):
     cotizacion = models.ForeignKey(Cotizacion, on_delete=models.CASCADE)
@@ -73,6 +98,14 @@ class DetalleCotizacion(models.Model):
     cantidad = models.IntegerField()
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    id_empresa = models.ForeignKey('config.Empresa', on_delete=models.CASCADE, related_name='detalles_cotizacion', null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.id_empresa_id:
+            user = get_current_user()
+            if user and hasattr(user, 'empresa') and user.empresa:
+                self.id_empresa = user.empresa
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Detalle de cotizacion {self.cotizacion.numero_cotizacion} - {self.producto.nombre}"

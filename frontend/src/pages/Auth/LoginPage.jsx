@@ -75,7 +75,7 @@ const LoginPage = () => {
           </p>
         </div>
         
-        <Card className="bg-white border rounded-xl shadow-md">
+        <Card className="bg-white border border-gray-200 rounded-xl shadow-sm">
           <CardHeader>
             <CardTitle className="text-center text-lg font-medium text-gray-900">
               Ingresa tus credenciales
@@ -93,7 +93,7 @@ const LoginPage = () => {
                   value={formData.username}
                   onChange={(e) => handleInputChange('username', e.target.value)}
                   placeholder="Ingresa tu usuario"
-                  className="border divider-border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   required
                 />
               </div>
@@ -108,7 +108,7 @@ const LoginPage = () => {
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   placeholder="Ingresa tu contraseña"
-                  className="border divider-border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   required
                 />
               </div>

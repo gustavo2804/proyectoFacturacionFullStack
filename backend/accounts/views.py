@@ -37,6 +37,14 @@ class customTokenObtainPairView(TokenObtainPairView):
                         'email': user.email,
                         'first_name': user.first_name,
                         'last_name': user.last_name,
+                        'empresa': {
+                            'id': user.empresa.id if user.empresa else None,
+                            'nombre': user.empresa.nombre if user.empresa else None,
+                            'rnc': user.empresa.rnc if user.empresa else None,
+                            'telefono': user.empresa.telefono if user.empresa else None,
+                            'direccion': user.empresa.direccion if user.empresa else None,
+                            'logo': user.empresa.logo.url if user.empresa and user.empresa.logo else None,
+                        } if user.empresa else None,
                     },
                     'success': True,
                 }
@@ -117,14 +125,23 @@ def logout(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def is_authenticated(request):
+    user = request.user
     return Response({
         'is_authenticated': True,
         'user': {
-            'id': request.user.id,
-            'username': request.user.username,
-            'email': request.user.email,
-            'first_name': request.user.first_name,
-            'last_name': request.user.last_name,
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'empresa': {
+                'id': user.empresa.id if user.empresa else None,
+                'nombre': user.empresa.nombre if user.empresa else None,
+                'rnc': user.empresa.rnc if user.empresa else None,
+                'telefono': user.empresa.telefono if user.empresa else None,
+                'direccion': user.empresa.direccion if user.empresa else None,
+                'logo': user.empresa.logo.url if user.empresa and user.empresa.logo else None,
+            } if user.empresa else None,
         }
     })
 
