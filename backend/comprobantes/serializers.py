@@ -48,7 +48,7 @@ class SerieComprobanteSerializer(serializers.ModelSerializer):
     class Meta:
         model = SerieComprobante
         fields = '__all__'
-        read_only_fields = ['fecha_creacion', 'fecha_actualizacion', 'anulado']
+        read_only_fields = ['fecha_creacion', 'fecha_actualizacion', 'anulado', 'id_empresa']
     
     def to_representation(self, instance):
         """Personalizar la representación para devolver el objeto completo del tipo de comprobante"""

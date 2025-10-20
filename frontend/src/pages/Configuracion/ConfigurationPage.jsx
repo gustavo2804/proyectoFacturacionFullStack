@@ -304,7 +304,8 @@ const ConfigurationPage = () => {
             <CardFooter className="flex justify-end gap-3 pt-6 border-t divider-border">
               <Button
                 onClick={handleCancel}
-                className="flex items-center gap-2 rounded-md border-emerald-500 bg-white text-slate-700 hover:bg-emerald-500 hover:text-white transition-colors"
+                variant="outline"
+                className="flex items-center gap-2 hover:bg-red-50 hover:border-red-500 hover:text-red-700 transition-colors"
                 size="sm"
               >
                 <X className="h-4 w-4" />

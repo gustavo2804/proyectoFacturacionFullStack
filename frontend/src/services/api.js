@@ -9,6 +9,32 @@ const api = axios.create({
     },
   });
 
+// Función para obtener el token de las cookies
+const getTokenFromCookies = () => {
+  const cookies = document.cookie.split(';');
+  for (let cookie of cookies) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === 'access_token') {
+      return value;
+    }
+  }
+  return null;
+};
+
+// Interceptor de request para agregar el token a las peticiones
+api.interceptors.request.use(
+  (config) => {
+    const token = getTokenFromCookies();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Interceptor de respuesta para manejar errores de autenticación
 api.interceptors.response.use(
   (response) => {

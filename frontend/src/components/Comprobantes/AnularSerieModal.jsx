@@ -46,7 +46,7 @@ const AnularSerieModal = ({ isOpen, onClose, onConfirm, isAnulando }) => {
               variant="outline"
               onClick={onClose}
               disabled={isAnulando}
-              className="flex-1 border-gray-300 hover:bg-gray-50"
+              className="flex-1 hover:bg-red-50 hover:border-red-500 hover:text-red-700 transition-colors"
             >
               Cancelar
             </Button>

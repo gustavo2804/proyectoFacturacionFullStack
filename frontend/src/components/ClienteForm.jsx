@@ -128,7 +128,7 @@ const ClienteForm = ({
             onClick={onCancel}
             variant="outline"
             size="sm"
-            className="gap-2"
+            className="gap-2 hover:bg-red-50 hover:border-red-500 hover:text-red-700 transition-colors"
           >
             <X className="h-4 w-4" />
             Cancelar

@@ -38,10 +38,12 @@ const TipoComprobantesApi = {
         return response.data
     },
     create: async (tipoComprobante) => {
+        // El backend asigna automáticamente el id_empresa desde el middleware
         const response = await api.post('/tipocomprobantes/', tipoComprobante)
         return response.data
     },
     update: async (id, tipoComprobante) => {
+        // El backend asigna automáticamente el id_empresa desde el middleware
         const response = await api.put(`/tipocomprobantes/${id}`, tipoComprobante)
         return response.data
     },

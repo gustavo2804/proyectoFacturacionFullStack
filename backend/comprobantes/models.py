@@ -10,9 +10,9 @@ class TipoComprobante(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id_empresa_id:
-            empresa = get_current_user()  # El usuario ahora ES la empresa
-            if empresa and empresa.is_authenticated:
-                self.id_empresa = empresa
+            user = get_current_user()
+            if user and hasattr(user, 'empresa') and user.empresa:
+                self.id_empresa = user.empresa
         super().save(*args, **kwargs)
 
     def __str__(self):

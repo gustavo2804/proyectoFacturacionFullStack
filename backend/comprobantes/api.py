@@ -7,12 +7,12 @@ from .serializers import TipoComprobanteSerializer, ComprobanteSerializer, Serie
 
 class TipoComprobanteViewSet(viewsets.ModelViewSet):
     queryset = TipoComprobante.objects.all()
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = TipoComprobanteSerializer
 
 class ComprobanteViewSet(viewsets.ModelViewSet):
     queryset=Comprobante.objects.all()
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = ComprobanteSerializer
 
     @action(detail=False, methods=['get'])
@@ -44,7 +44,7 @@ class ComprobanteViewSet(viewsets.ModelViewSet):
     
 class SerieComprobanteViewSet(viewsets.ModelViewSet):
     queryset=SerieComprobante.objects.all()
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = SerieComprobanteSerializer
     
     @action(detail=True, methods=['post'])

@@ -34,6 +34,7 @@ export const navigationConfig = {
       href: '/comprobantes',
       icon: 'document',
       actions: [
+        { name: 'Tipos de Comprobantes', href: '/comprobantes/tipos' }
       ]
     },
     {
